@@ -10,15 +10,15 @@ import {
 } from "lucide-react";
 import { Card } from "../ui/card";
 
-const Features = () => {
+const Features = ({isheader=true}) => {
   return (
-    <div className="py-10 px-12 md:px-16 lg:px-24 ">
-      <Header
+    <div className="py-20 px-12 md:px-16 lg:px-24 ">
+      {isheader && <Header
         title="Features"
         subtitle="Built for modern HR teams"
         description="From real-time tracking to detailed analytics, AttendON gives you the
         tools to manage your workforce with confidence."
-      />
+      />}
       <div className="grid lg:grid-cols-3 gap-6 mt-16">
         <FeatureCard
           icon={<Clock className="p-2 size-8 mb-4 bg-primary/20 " />}

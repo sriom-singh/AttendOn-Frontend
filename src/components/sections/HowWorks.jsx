@@ -12,7 +12,7 @@ import { Card } from "../ui/card";
 
 const HowWorks = () => {
   return (
-    <div className="py-16 my-10 bg-primary/10">
+    <div className="py-16 my-4 bg-primary/5">
       <div className="px-12 md:px-16 lg:px-24 ">
         <Header
           title="How it Works"

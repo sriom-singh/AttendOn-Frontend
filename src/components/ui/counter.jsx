@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-function Counter({ end, duration, suffix = "" }) {
+export function Counter({ end, duration, suffix = "" }) {
   const [count, setCount] = useState(0);
 
   useEffect(() => {

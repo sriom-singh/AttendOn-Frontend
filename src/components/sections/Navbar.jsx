@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import { MoveUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +13,16 @@ import {
 } from "@/components/ui/dialog";
 import Login from "./Login";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
 const links = ["Home", "About Us", "Features", "Pricing", "Contact"];
 const tabs = ["Overview", "Analytics", "Settings", "Team"];
 
@@ -22,6 +32,7 @@ const getPath = (link) => {
 
 export default function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { pathname } = useLocation();
   const [activeTab, setActiveTab] = useState("Overview");
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -68,23 +79,49 @@ export default function Navbar() {
 
         {/* Actions */}
         <div className="flex items-center  gap-2">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className={"md:flex hidden"} variant="outline">Sign In</Button>
-            </DialogTrigger>
-            <DialogContent className="rounded-xl " showCloseButton={true}>
-              <Login />
-            </DialogContent>
-          </Dialog>
+          <Button
+            onClick={() => {
+              navigate("login");
+            }}
+            className={"md:flex hidden"}
+            variant="outline"
+          >
+            Sign In
+          </Button>
           {/* <Button size="lg" variant="outline">
             Sign in
           </Button> */}
-          <Button variant="" size="lg">
+
+             <Button
+            onClick={() => {
+              navigate("register");
+            }}
+            variant=""
+            size="lg"
+          >
             Get started free <MoveUpRight className="size-3" />
           </Button>
-          <div className="w-[30px] h-[30px] rounded-full bg-[#E1F5EE] flex items-center justify-center text-xs font-medium text-[#0F6E56] cursor-pointer border border-border">
-            SR
-          </div>
+
+          {/* Profile */}
+          <DropdownMenu>
+            <DropdownMenuTrigger render={<Button className="w-[30px] h-[30px] rounded-full  flex items-center justify-center text-xs font-medium cursor-pointer border border-border" variant="outline" />}>
+              SR
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuItem>Profile</DropdownMenuItem>
+                <DropdownMenuItem onClick={()=>{navigate('/dashboard')}}>Dashboard</DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem>Team</DropdownMenuItem>
+                <DropdownMenuItem>Subscription</DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+       
+    
           {/* Mobile menu button */}
           <Button
             className="md:hidden flex flex-col gap-[5px] p-2 border-none bg-transparent cursor-pointer"
@@ -119,14 +156,11 @@ export default function Navbar() {
               </Link>
             );
           })}
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className={"text-left w-full mb-2"} variant="outline">Sign In</Button>
-            </DialogTrigger>
-            <DialogContent className="rounded-xl " showCloseButton={true}>
-              <Login />
-            </DialogContent>
-          </Dialog>
+        
+              <Button onClick={()=>{navigate('/login')}} className={"text-left w-full mb-2"} variant="outline">
+                Sign In
+              </Button>
+           
           {/* <Button size="lg" variant="outline">
             Sign in
           </Button> */}

@@ -44,7 +44,7 @@ const stuendentData = [
 
 const Hero = () => {
   return (
-    <section className=" px-12 md:px-16 lg:px-24  flex lg:flex-row flex-col-reverse gap-10 md:pt10 pt-20 min-h-[100vh] min w-full items-center justify-between">
+    <section className=" px-12 md:px-16 lg:px-24 bg-primary/10  flex lg:flex-row flex-col-reverse gap-10 md:pt10 pt-20 min-h-[99vh] min w-full items-center justify-between">
       {/* Left Side*/}
       <div className="flex flex-col items-center md:items-start lg:w-1/2 gap-8">
         <Badge className="bg-primary/40  px-4 text-xs rounded-full py-3 border-[1px solid rgba(91,91,214,0.3)] font-light">
