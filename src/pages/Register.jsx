@@ -17,7 +17,6 @@ import {
   CardTitle,
   CardDescription,
   CardFooter,
-  CardAction,
   CardContent,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -25,7 +24,42 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerSchema } from "../schemas/registerSchema";
+import { useAuthStore } from "../store/useAuthStore";
+import { useNavigate } from "react-router-dom";
+
 const Register = () => {
+  const registerUser = useAuthStore((s) => s.register);
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      role: "admin",
+    },
+  });
+
+  const selectedRole = watch("role");
+
+  const onSubmit = async (data) => {
+    const res = await registerUser({
+      ...data,
+      name: `${data.fname} ${data.lname}`,
+    });
+
+    // ✅ redirect only if success
+    if (res?.success) {
+      navigate("/login"); // or "/login"
+    }
+  };
+
   return (
     <section className=" px-12 md:px-16 lg:px-32 py-20  flex lg:flex-row flex-col gap-20 md:pt10 pt-20 min-h-[100vh] min w-full items-center justify-between">
       {/* Left Side*/}
@@ -82,67 +116,77 @@ const Register = () => {
             <div className="flex flex-col gap-4">
               <FieldGroup>
                 <Field className={"mt-2"}>
-                  <p>I am a</p>
+                  <p>I am </p>
                   <div className="flex gap-4">
-                    <Button
-                      variant="outline"
-                      className="flex-1 flex-col items-center py-8"
-                    >
-                      <ShieldUser />
-                      Admin
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="flex-1 flex-col items-center py-8"
-                    >
-                      <UserPen />
-                      Student
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="flex-1 flex-col items-center py-8"
-                    >
-                      <IdCardLanyard />
-                      Employee
-                    </Button>
+                    {["admin", "student", "staff"].map((role) => (
+                      <Button
+                        type="button"
+                        key={role}
+                        variant={selectedRole === role ? "default" : "outline"}
+                        className={"flex-1 flex-col items-center py-8"}
+                        onClick={() => setValue("role", role)}
+                      >
+                        {role === "admin" && <ShieldUser />}
+                        {role === "student" && <UserPen />}
+                        {role === "staff" && <IdCardLanyard />}
+                        {role}
+                      </Button>
+                    ))}
                   </div>
                 </Field>
                 <Field className={"flex flex-row gap-4"}>
                   <div>
-                    <Label htmlFor="fname" className={"mb-2 " }>
+                    <Label htmlFor="fname" className={"mb-2 "}>
                       First Name
                     </Label>
 
-                    <Input id="fname" name="fname" placeholder="Pratik" />
+                    <Input {...register("fname")} placeholder="John" />
+                    {errors.fname && (
+                      <p className="text-red-500 text-xs">
+                        {errors.fname.message}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <Label className={"mb-2"} htmlFor="lname">
                       Last Name
                     </Label>
-                    <Input id="lname" name="lname" placeholder="Mishra" />
+                    <Input {...register("lname")} placeholder="Doe" />
+                    {errors.lname && (
+                      <p className="text-red-500 text-xs">
+                        {errors.lname.message}
+                      </p>
+                    )}
                   </div>
                 </Field>
                 <Field>
                   <Label htmlFor="name-1">Work email</Label>
-                  <Input
-                    id="name-1"
-                    name="name"
-                    placeholder="you@company.com"
-                  />
+                  <Input {...register("email")} placeholder="you@company.com" />
+                  {errors.email && (
+                    <p className="text-red-500 text-xs">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </Field>
-                <Field>
-                  <Label htmlFor="cname">Organization name</Label>
-                  <Input id="cname" name="cname" placeholder="Graphic Era" />
-                </Field>
+
                 <Field>
                   <Label htmlFor="password">Password</Label>
                   <Input
-                    id="password"
-                    name="password"
+                    {...register("password")}
                     placeholder="Min 8 characters"
                   />
+                  {errors.password && (
+                    <p className="text-red-500 text-xs">
+                      {errors.password.message}
+                    </p>
+                  )}
                 </Field>
-                <Button className="w-full" size="lg">
+                <Button
+                  onClick={handleSubmit(onSubmit)}
+                  disable={isSubmitting}
+                  className="w-full"
+                  size="lg"
+                >
                   Create account
                 </Button>
               </FieldGroup>

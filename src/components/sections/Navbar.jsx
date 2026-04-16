@@ -1,17 +1,9 @@
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { MoveUpRight } from "lucide-react";
+import { LogOut, MoveUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import Login from "./Login";
+import { useAuthStore } from "../../store/useAuthStore";
 
 import {
   DropdownMenu,
@@ -21,7 +13,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
 const links = ["Home", "About Us", "Features", "Pricing", "Contact"];
 const tabs = ["Overview", "Analytics", "Settings", "Team"];
@@ -36,6 +28,15 @@ export default function Navbar() {
   const { pathname } = useLocation();
   const [activeTab, setActiveTab] = useState("Overview");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const user = useAuthStore((state) => state.user);
+  let fname, lname;
+  if (user) {
+    let name = user.name.split(" ");
+    fname = name[0];
+    lname = name[1];
+  }
+  const isAuthenticated = !!user;
+  console.log(isAuthenticated);
 
   return (
     <nav className="w-full fixed top-0 bg-background/20 backdrop-blur-md  z-50 border-b px-12 md:px-16 lg:px-24 border-border ">
@@ -67,7 +68,7 @@ export default function Navbar() {
                 className={`text-sm px-3 py-1.5 rounded-md transition-colors
         ${
           isActive
-            ? "bg-secondary text-foreground font-medium"
+            ? "bg-primary/50 text-foreground font-medium"
             : "text-muted-foreground hover:bg-secondary hover:text-foreground"
         }`}
               >
@@ -79,49 +80,77 @@ export default function Navbar() {
 
         {/* Actions */}
         <div className="flex items-center  gap-2">
-          <Button
-            onClick={() => {
-              navigate("login");
-            }}
-            className={"md:flex hidden"}
-            variant="outline"
-          >
-            Sign In
-          </Button>
+          {!isAuthenticated && (
+            <Button
+              onClick={() => {
+                navigate("login");
+              }}
+              className={"md:flex hidden"}
+              variant="outline"
+            >
+              Sign In
+            </Button>
+          )}
+
           {/* <Button size="lg" variant="outline">
             Sign in
           </Button> */}
-
-             <Button
-            onClick={() => {
-              navigate("register");
-            }}
-            variant=""
-            size="lg"
-          >
-            Get started free <MoveUpRight className="size-3" />
-          </Button>
+          {!isAuthenticated && (
+            <Button
+              onClick={() => {
+                navigate("register");
+              }}
+              variant=""
+              size="lg"
+            >
+              Get started free <MoveUpRight className="size-3" />
+            </Button>
+          )}
 
           {/* Profile */}
-          <DropdownMenu>
-            <DropdownMenuTrigger render={<Button className="w-[30px] h-[30px] rounded-full  flex items-center justify-center text-xs font-medium cursor-pointer border border-border" variant="outline" />}>
-              SR
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuGroup>
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem onClick={()=>{navigate('/dashboard')}}>Dashboard</DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem>Team</DropdownMenuItem>
-                <DropdownMenuItem>Subscription</DropdownMenuItem>
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-       
-    
+          {isAuthenticated && (
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    className="w-[30px] h-[30px] rounded-full  flex items-center justify-center text-xs font-medium cursor-pointer border border-border"
+                    variant="outline"
+                  />
+                }
+              >
+                {fname[0] + lname[1].toUpperCase()}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className={"rounded-xl"}>
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel className={"rounded-lg"}>My Account</DropdownMenuLabel>
+                  <DropdownMenuItem className={"rounded-lg"}
+                    onClick={() => {
+                      navigate("/profile");
+                    }}
+                  >
+                    Profile
+                  </DropdownMenuItem>
+                  {user?.role === "admin" && (
+                    <DropdownMenuItem className={"rounded-lg"}
+                      onClick={() => {
+                        navigate("/dashboard");
+                      }}
+                    >
+                      Dashboard
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem className={"rounded-lg"}> Subscription</DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem className={"border bg-red-700 rounded-lg"}>
+                    <LogOut /> Logout
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+
           {/* Mobile menu button */}
           <Button
             className="md:hidden flex flex-col gap-[5px] p-2 border-none bg-transparent cursor-pointer"
@@ -156,11 +185,17 @@ export default function Navbar() {
               </Link>
             );
           })}
-        
-              <Button onClick={()=>{navigate('/login')}} className={"text-left w-full mb-2"} variant="outline">
-                Sign In
-              </Button>
-           
+
+          <Button
+            onClick={() => {
+              navigate("/login");
+            }}
+            className={"text-left w-full mb-2"}
+            variant="outline"
+          >
+            Sign In
+          </Button>
+
           {/* <Button size="lg" variant="outline">
             Sign in
           </Button> */}

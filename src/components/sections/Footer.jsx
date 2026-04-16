@@ -23,7 +23,7 @@ const Footer = () => {
                   viewBox="0 0 13 13"
                   fill="none"
                   stroke="#5B5BD6"
-                  stroke-width="1.3"
+                  strokeWidth="1.3"
                 >
                   <path d="M1 1l11 11M1 12h4V8L1 4" />
                   <path d="M12 1H8l4 4" />
@@ -36,7 +36,7 @@ const Footer = () => {
                   viewBox="0 0 13 13"
                   fill="none"
                   stroke="#5B5BD6"
-                  stroke-width="1.3"
+                  strokeWidth="1.3"
                 >
                   <rect x="2" y="2" width="9" height="9" rx="2.5" />
                   <circle cx="6.5" cy="6.5" r="2" />
@@ -50,7 +50,7 @@ const Footer = () => {
                   viewBox="0 0 13 13"
                   fill="none"
                   stroke="#5B5BD6"
-                  stroke-width="1.3"
+                  strokeWidth="1.3"
                 >
                   <path d="M1 3.5h11L6.5 8 1 3.5z" />
                   <path d="M1 3.5v7h11v-7" />
