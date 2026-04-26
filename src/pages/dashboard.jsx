@@ -13,7 +13,16 @@ import {
   SidebarSeparator,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { LayoutDashboard, Users, Check, Settings, LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  Check,
+  Settings,
+  LogOut,
+  Plus,
+  UserStar,
+  Building2
+} from "lucide-react";
 import { Outlet } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
 import {
@@ -29,7 +38,8 @@ import { Button } from "@/components/ui/button";
 
 const menuItems = [
   { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-  { name: "Employees", path: "/dashboard/employees", icon: Users },
+  { name: "Organization", path: "/dashboard/organization", icon: Building2  },
+  { name: "Employees", path: "/dashboard/employees", icon: UserStar },
   { name: "Students", path: "/dashboard/students", icon: Users },
   { name: "Attendance", path: "/dashboard/attendance", icon: Check },
   { name: "Settings", path: "/dashboard/settings", icon: Settings },
@@ -39,18 +49,21 @@ const Dashboard = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
-  let fname, lname;
-  if (user) {
-    let name = user.name.split(" ");
-    fname = name[0];
-    lname = name[1];
-  }
+  const initials =
+    user?.name
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase() || "U";
+
   const isActive = (path) => {
     if (path === "/dashboard") {
       return pathname === path;
     }
     return pathname.startsWith(path);
   };
+
+  const title = pathname.split("/")[2] || "dashboard";
 
   return (
     <SidebarProvider className="min-h-screen ">
@@ -77,47 +90,45 @@ const Dashboard = () => {
         <p className="text-[10px] text-muted-foreground uppercase pt-2 px-2">
           Overview
         </p>
+        <SidebarContent className="flex-1 overflow-y-auto">
+          <SidebarMenu className="px-2 py-2">
+            {menuItems.map((item) => {
+              const active = isActive(item.path);
 
-        <SidebarMenu className="px-2 py-2">
-          {menuItems.map((item) => {
-            const active = isActive(item.path);
+              return (
+                <SidebarMenuItem className={"p-0 py-1"} key={item.name}>
+                  <SidebarMenuButton
+                    // onClick={() => navigate(item.path)}
 
-            return (
-              <SidebarMenuItem className={"p-0 py-1"} key={item.name}>
-                <SidebarMenuButton
-                  // onClick={() => navigate(item.path)}
-
-                  asChild
-                >
-                  <Link
-                    className={`w-full flex gap-2 justify-start py-2 cursor-pointer transition-colors ${
-                      active
-                        ? "bg-primary/10 hover:bg-primary/10 text-primary font-medium hover:text-primary"
-                        : "text-slate-300 hover:bg-slate-800 py-0 hover:text-white"
-                    }`}
-                    to={item.path}
+                    asChild
                   >
-                    <item.icon size={18} />
-                    <span>{item.name}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            );
-          })}
-        </SidebarMenu>
-
+                    <Link
+                      className={`w-full flex gap-2 justify-start py-2 cursor-pointer transition-colors ${
+                        active
+                          ? "bg-primary/10 hover:bg-primary/10 text-primary font-medium hover:text-primary"
+                          : "text-slate-300 hover:bg-slate-800 py-0 hover:text-white"
+                      }`}
+                      to={item.path}
+                    >
+                      <item.icon size={18} />
+                      <span>{item.name}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            })}
+          </SidebarMenu>
+        </SidebarContent>
         {/* Footer */}
-        <SidebarFooter   className="px-4 flex flex-row py-4 text-xs fixed bottom-1 ">
+        <SidebarFooter className="mt-auto text-xs px-4 py-4">
           {/* <LogOut size={16} /> Logout */}
           <DropdownMenu>
-            <DropdownMenuTrigger
-            className="flex gap-2 items-center cursor-pointer  w-full"
-            >
-              <span className="bg-primary/40 rounded-full p-3">
-                {fname[0] + lname[1].toUpperCase()}
-              </span>
+            <DropdownMenuTrigger className="flex gap-2 items-center cursor-pointer  w-full">
+              <span className="bg-primary/40 rounded-full p-3">{initials}</span>
               <div>
-                <p className="font-sans-serif text-start font-bold">{user?.name}</p>
+                <p className="font-sans-serif text-start font-bold">
+                  {user?.name}
+                </p>
                 <p className="text-muted-foreground text-xs">{user?.email}</p>
               </div>
             </DropdownMenuTrigger>
@@ -137,7 +148,9 @@ const Dashboard = () => {
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem className={"border text-xs bg-red-700 rounded-lg"}>
+                <DropdownMenuItem
+                  className={"border text-xs bg-red-700 rounded-lg"}
+                >
                   <LogOut /> Logout
                 </DropdownMenuItem>
               </DropdownMenuGroup>
@@ -145,9 +158,8 @@ const Dashboard = () => {
           </DropdownMenu>
         </SidebarFooter>
       </Sidebar>
-      <SidebarTrigger className={"my-4"} />
       {/* Content */}
-      <SidebarInset className="flex-1 p-4 py-6">
+      <SidebarInset className="flex-1">
         <Outlet />
       </SidebarInset>
     </SidebarProvider>

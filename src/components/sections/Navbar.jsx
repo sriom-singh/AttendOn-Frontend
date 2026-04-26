@@ -29,12 +29,12 @@ export default function Navbar() {
   const [activeTab, setActiveTab] = useState("Overview");
   const [mobileOpen, setMobileOpen] = useState(false);
   const user = useAuthStore((state) => state.user);
-  let fname, lname;
-  if (user) {
-    let name = user.name.split(" ");
-    fname = name[0];
-    lname = name[1];
-  }
+  const initials =
+    user?.name
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase() || "U";
   const isAuthenticated = !!user;
   console.log(isAuthenticated);
 
@@ -118,12 +118,15 @@ export default function Navbar() {
                   />
                 }
               >
-                {fname[0] + lname[1].toUpperCase()}
+                {initials}
               </DropdownMenuTrigger>
               <DropdownMenuContent className={"rounded-xl"}>
                 <DropdownMenuGroup>
-                  <DropdownMenuLabel className={"rounded-lg"}>My Account</DropdownMenuLabel>
-                  <DropdownMenuItem className={"rounded-lg"}
+                  <DropdownMenuLabel className={"rounded-lg"}>
+                    My Account
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem
+                    className={"rounded-lg"}
                     onClick={() => {
                       navigate("/profile");
                     }}
@@ -131,7 +134,8 @@ export default function Navbar() {
                     Profile
                   </DropdownMenuItem>
                   {user?.role === "admin" && (
-                    <DropdownMenuItem className={"rounded-lg"}
+                    <DropdownMenuItem
+                      className={"rounded-lg"}
                       onClick={() => {
                         navigate("/dashboard");
                       }}
@@ -139,11 +143,14 @@ export default function Navbar() {
                       Dashboard
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem className={"rounded-lg"}> Subscription</DropdownMenuItem>
+                  <DropdownMenuItem className={"rounded-lg"}>
+                    {" "}
+                    Subscription
+                  </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem className={"border bg-red-700 rounded-lg"}>
+                  <DropdownMenuItem className={"border bg-destructive/10 text-destructive hover:bg-destructive/20 rounded-lg"}>
                     <LogOut /> Logout
                   </DropdownMenuItem>
                 </DropdownMenuGroup>

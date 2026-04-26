@@ -17,17 +17,24 @@ import { useAuthStore } from "./store/useAuthStore";
 import ProtectedRoute from "./protectRoute";
 import Loader from "./pages/Loader";
 import Profile from "./pages/Profile";
+import { useOrgStore } from "./store/useOrgStore";
+import Attendance from "./dashboard/Attendance";
+import Settings from "./dashboard/Setting";
+import DashboardHome from "./dashboard/DashboardHome";
+import Organization from "./dashboard/Organization";
 
 function App() {
   const { pathname } = useLocation();
   const showNavbar = !pathname.startsWith("/dashboard");
   const fetchUser = useAuthStore((state) => state.fetchUser);
+  const fetchOrg = useOrgStore((state) => state.get);
   const loading = useAuthStore((s) => s.loading);
 
   console.log(fetchUser);
 
   useEffect(() => {
     fetchUser();
+    fetchOrg();
   }, [fetchUser]);
 
   return loading ? (
@@ -51,10 +58,13 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route path="employees" element={<Employees />} />
+          <Route index element={<DashboardHome />} />
+
           <Route path="students" element={<Students />} />
-          <Route path="attendance" element={<div>Attendance</div>} />
-          <Route path="settings" element={<div>Settings</div>} />
+          <Route path="attendance" element={<Attendance />} />
+          <Route path="organization" element={<Organization />} />
+          <Route path="employees" element={<Employees />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
         <Route
           path="profile"

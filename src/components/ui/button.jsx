@@ -39,7 +39,7 @@ const buttonVariants = cva(
 )
 
 function Button({
-  className,
+  className="hover:bg-primary/70 transition-all duration-200",
   variant = "default",
   size = "default",
   ...props

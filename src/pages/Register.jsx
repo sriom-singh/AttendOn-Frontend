@@ -22,16 +22,22 @@ import {
 import { Input } from "@/components/ui/input";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema } from "../schemas/registerSchema";
+import { registerSchema } from "../schemas/schema";
 import { useAuthStore } from "../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
+import CreateOrg from "@/components/sections/CreateOrg";
+import { useOrgStore } from "@/store/useOrgStore";
 
 const Register = () => {
   const registerUser = useAuthStore((s) => s.register);
+  const {org} = useOrgStore();
+  if(org?.length()){
+    return <Navigate to={"/dashboard"} />
+  }
   const navigate = useNavigate();
   const {
     register,
@@ -69,7 +75,7 @@ const Register = () => {
           Trusted by 500+ companies across India
         </Badge>
         <h1 className="text-3xl text-center md:text-start  font-sans-serif font-bold ">
-          Set up your organisation in minutes
+          Set up your account in minutes
         </h1>
         <p className="font-light text-justify text-sm text-muted-foreground">
           No credit card required. Start your 14-day free trial and invite your
@@ -100,6 +106,8 @@ const Register = () => {
       </div>
 
       {/* Right Side */}
+      
+     
 
       <div className="w-full  sm:max-w-lg ">
         <Card className={"bg-transparent"}>
@@ -199,7 +207,7 @@ const Register = () => {
                 Sign in →
               </Link>
             </p>
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-[10px] text-center  text-muted-foreground">
               By signing up you agree to our Terms of Service and Privacy Policy
             </p>
           </CardFooter>
@@ -217,4 +225,7 @@ const Feattures = ({ icon, title }) => {
     </div>
   );
 };
+
+
+
 export default Register;
